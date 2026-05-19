@@ -28,8 +28,12 @@ if (USE_GMAIL) {
     });
 } else {
     // Resend for production
-    resend = new Resend(process.env.RESEND_API_KEY);
-    console.log('✅ Using Resend for email delivery');
+    if (process.env.RESEND_API_KEY) {
+        resend = new Resend(process.env.RESEND_API_KEY);
+        console.log('✅ Using Resend for email delivery');
+    } else {
+        console.warn('⚠️ Warning: RESEND_API_KEY is not set. Email features will be disabled.');
+    }
 }
 
 /**
