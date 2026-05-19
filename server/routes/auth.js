@@ -4,9 +4,13 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { sendPasswordResetEmail } = require('../services/emailService');
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey'; // Use env in prod!
+const {
+  registerValidation,
+  validate,
+} = require("../middlewares/auth.validator");
 
 // REGISTER
-router.post('/register', async (req, res) => {
+router.post('/register',registerValidation, validate, async (req, res) => {
     try {
         const { username, email, password, role } = req.body;
 
