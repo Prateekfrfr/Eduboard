@@ -1,6 +1,10 @@
-import Navbar from './components/Navbar';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import ScrollToTop from './components/ScrollToTop';
+import { ThemeProvider } from './context/ThemeContext';
+
+// Pages Imports
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Whiteboard from './components/Whiteboard';
@@ -8,10 +12,11 @@ import Dashboard from './pages/Dashboard';
 import LandingPage from './pages/LandingPage';
 import FeaturesPage from './pages/FeaturesPage';
 import AboutPage from './pages/AboutPage';
+import ContactPage from "./pages/ContactPage";
 import VerificationPending from './pages/VerificationPending';
 import AdminPanel from './pages/AdminPanel';
-import ScrollToTop from './components/ScrollToTop';
-import { ThemeProvider } from './context/ThemeContext';
+
+// ─── ROUTE WRAPPERS & PROTECTION ───────────────────
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -65,59 +70,62 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+// ─── MAIN APPLICATION COMPONENT ────────────────────
+
 function App() {
   return (
     <ThemeProvider>
       <Router>
         <ScrollToTop />
         <div className="min-h-screen bg-slate-950 text-white overflow-x-hidden font-sans selection:bg-purple-500/30">
-        <Navbar /> 
+          <Navbar /> 
           <div className="pt-16">
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/features" element={<FeaturesPage />} />
-            <Route path="/about" element={<AboutPage />} />
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/features" element={<FeaturesPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
 
-            {/* Auth Routes */}
-            <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-            <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
+              {/* Auth Routes */}
+              <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+              <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
 
-            {/* Private Routes */}
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/board/:roomId"
-              element={
-                <PrivateRoute>
-                  <Whiteboard />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/verification-pending"
-              element={
-                <PrivateRoute>
-                  <VerificationPending />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <AdminRoute>
-                  <AdminPanel />
-                </AdminRoute>
-              }
-            />
-          </Routes>
-        </div>
+              {/* Private Routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/board/:roomId"
+                element={
+                  <PrivateRoute>
+                    <Whiteboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/verification-pending"
+                element={
+                  <PrivateRoute>
+                    <VerificationPending />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <AdminRoute>
+                    <AdminPanel />
+                  </AdminRoute>
+                }
+              />
+            </Routes>
+          </div>
         </div>
       </Router>
     </ThemeProvider>
