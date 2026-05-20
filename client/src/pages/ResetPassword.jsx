@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaLock } from 'react-icons/fa';
+import { FaArrowRight, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { BsLightningChargeFill } from 'react-icons/bs';
 import TeacherCharacter from '../components/TeacherCharacter';
 
@@ -10,6 +10,8 @@ const ResetPassword = () => {
     const [formData, setFormData] = useState({ newPassword: '', confirmPassword: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -102,14 +104,19 @@ const ResetPassword = () => {
                         <div className="relative">
                             <FaLock className="absolute top-4 left-4 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
                             <input
-                                type="password"
+                                type={showPassword ? "text" : "password"}
                                 name="newPassword"
                                 value={formData.newPassword}
                                 onChange={handleChange}
-                                className="w-full input-glass pl-12 pr-4 py-3.5 rounded-xl focus:outline-none"
+                                className="w-full input-glass pl-12 pr-12 py-3.5 rounded-xl focus:outline-none"
                                 placeholder="••••••••"
                                 required
                             />
+                            {showPassword ? (
+                                <FaEyeSlash className="absolute top-4 right-4 text-slate-500 cursor-pointer" onClick={() => setShowPassword(false)} />
+                            ) : (
+                                <FaEye className="absolute top-4 right-4 text-slate-500 cursor-pointer" onClick={() => setShowPassword(true)} />
+                            )}
                         </div>
                     </div>
                     <div className="group">
@@ -117,14 +124,19 @@ const ResetPassword = () => {
                         <div className="relative">
                             <FaLock className="absolute top-4 left-4 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
                             <input
-                                type="password"
+                                type={showConfirmPassword ? "text" : "password"}
                                 name="confirmPassword"
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
-                                className="w-full input-glass pl-12 pr-4 py-3.5 rounded-xl focus:outline-none"
+                                className="w-full input-glass pl-12 pr-12 py-3.5 rounded-xl focus:outline-none"
                                 placeholder="••••••••"
                                 required
                             />
+                            {showConfirmPassword ? (
+                                <FaEyeSlash className="absolute top-4 right-4 text-slate-500 cursor-pointer" onClick={() => setShowConfirmPassword(false)} />
+                            ) : (
+                                <FaEye className="absolute top-4 right-4 text-slate-500 cursor-pointer" onClick={() => setShowConfirmPassword(true)} />
+                            )}
                         </div>
                     </div>
 
