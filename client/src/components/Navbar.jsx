@@ -16,6 +16,17 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    useEffect(() => {
+        if (isMobileMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isMobileMenuOpen]);
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/');
@@ -29,9 +40,13 @@ const Navbar = () => {
 
     return (
         <nav
-            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-                ? 'bg-slate-950/80 backdrop-blur-xl border-b border-white/10 shadow-lg overflow-hidden'
-                : 'bg-slate-950/70 backdrop-blur-md '
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+                isMobileMenuOpen
+                    ? 'bottom-0 bg-slate-950'
+                    : (isScrolled
+                        ? 'bg-slate-950/80 backdrop-blur-xl border-b border-white/10 shadow-lg overflow-hidden'
+                        : 'bg-slate-950/70 backdrop-blur-md '
+                      )
                 }`}
         >
             <div className="max-w-7xl mx-auto px-6 lg:px-8">

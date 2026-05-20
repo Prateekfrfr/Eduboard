@@ -6,6 +6,9 @@ import { FaArrowRight, FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 import { BsLightningChargeFill } from 'react-icons/bs';
 import StudentCharacter from '../components/StudentCharacter';
 
+const isValidPassword = (p) =>
+  p.length >= 8 && /[0-9]/.test(p) && /[A-Z]/.test(p) && /[^A-Za-z0-9]/.test(p);
+
 const Signup = () => {
     const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'student' });
     const [documents, setDocuments] = useState({
@@ -34,6 +37,12 @@ const Signup = () => {
         setLoading(true);
 
         try {
+
+            if (!isValidPassword(formData.password)) {
+                setError('Please follow password guidelines.');
+                setLoading(false);
+                return;
+            }
             // Step 1: Register user
             const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/register`, formData);
             localStorage.setItem('token', res.data.token);
@@ -166,9 +175,13 @@ const Signup = () => {
                                 onChange={handleChange}
                                 className="w-full input-glass pl-12 pr-4 py-3.5 rounded-xl focus:outline-none"
                                 placeholder="••••••••"
+                                maxLength={64}
                                 required
                             />
                         </div>
+                        <p className="text-sm text-gray-400 mt-1.5">
+                            Password must contain at least 8 characters with a number, uppercase letter, and special character.
+                        </p>
                     </div>
 
                     {/* Role Selection */}
