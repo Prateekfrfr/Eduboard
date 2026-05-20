@@ -34,11 +34,9 @@ export default function ContactPage() {
         {/* Glow Background Mesh matching EduBoard Theme */}
         <div className="absolute top-[-60px] left-1/2 -translate-x-1/2 w-[600px] h-[340px] bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.15)_0%,transparent_70%)] pointer-events-none" />
         
-        <div className="inline-block bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold tracking-widest uppercase px-3.5 py-1.5 rounded-full mb-4">
-          Get In Touch
-        </div>
+        {/* "Get In Touch" Badge Removed as requested by maintainer */}
         
-        <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl bg-gradient-to-r from-slate-100 via-purple-400 to-purple-600 bg-clip-text text-transparent mb-4 leading-tight tracking-tight">
+        <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-4 leading-tight tracking-tight">
           Contact Our Team
         </h1>
         

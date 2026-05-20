@@ -15,10 +15,10 @@ const Footer = () => {
             { name: 'Contact', path: '/contact' }, // Fixed: Changed '#contact' to '/contact'
         ],
         Resources: [
-            { name: 'Documentation', path: '#docs' },
-            { name: 'Support', path: '#support' },
-            { name: 'FAQ', path: '#faq' },
-        ],
+    { name: 'Documentation', path: '/docs' },
+    { name: 'Support', path: '/support' },
+    { name: 'FAQ', path: '/faq' },
+  ],
         Legal: [
             { name: 'Privacy Policy', path: '#privacy' },
             { name: 'Terms of Service', path: '#terms' },
