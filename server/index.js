@@ -517,10 +517,13 @@ io.on('connection', (socket) => {
   });
 
   socket.on('clear-canvas', async (roomId) => {
-    // Broadcast to ALL users in room (including sender)
-    io.to(roomId).emit('clear-canvas');
-    // Clear DB
     try {
+      // FIX #94: verify the emitting user is the board owner before clearing
+      const board = await Board.findOne({ roomId });
+      if (!board || board.createdBy.toString() !== socket.userId) {
+        return socket.emit('error', { message: 'Unauthorized: only the board teacher can clear the canvas' });
+      }
+      io.to(roomId).emit('clear-canvas');
       await Board.findOneAndUpdate(
         { roomId },
         { $set: { elements: [] } },
@@ -550,6 +553,11 @@ io.on('connection', (socket) => {
   // Grant editing permission to specific student
   socket.on('grant-student-permission', async ({ roomId, studentId }) => {
     try {
+      // FIX #94: verify the emitting user is the board owner
+      const board = await Board.findOne({ roomId });
+      if (!board || board.createdBy.toString() !== socket.userId) {
+        return socket.emit('error', { message: 'Unauthorized: only the board teacher can grant permissions' });
+      }
       await Board.findOneAndUpdate(
         { roomId },
         { $addToSet: { allowedStudents: studentId } }
@@ -571,6 +579,11 @@ io.on('connection', (socket) => {
   // Revoke editing permission from specific student
   socket.on('revoke-student-permission', async ({ roomId, studentId }) => {
     try {
+      // FIX #94: verify the emitting user is the board owner
+      const board = await Board.findOne({ roomId });
+      if (!board || board.createdBy.toString() !== socket.userId) {
+        return socket.emit('error', { message: 'Unauthorized: only the board teacher can revoke permissions' });
+      }
       await Board.findOneAndUpdate(
         { roomId },
         { $pull: { allowedStudents: studentId } }
@@ -591,11 +604,13 @@ io.on('connection', (socket) => {
 
   // Toggle student editing permission
   socket.on('toggle-student-editing', async ({ roomId, allowEditing }) => {
-    // Broadcast to all users in room
-    socket.to(roomId).emit('student-editing-changed', allowEditing);
-
-    // Update database
     try {
+      // FIX #94: verify the emitting user is the board owner
+      const board = await Board.findOne({ roomId });
+      if (!board || board.createdBy.toString() !== socket.userId) {
+        return socket.emit('error', { message: 'Unauthorized: only the board teacher can toggle student editing' });
+      }
+      socket.to(roomId).emit('student-editing-changed', allowEditing);
       await Board.findOneAndUpdate(
         { roomId },
         { $set: { allowStudentEditing: allowEditing } }
