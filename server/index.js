@@ -205,19 +205,28 @@ app.delete('/api/boards/by-id/:boardId', verifyToken, async (req, res) => {
     const { boardId } = req.params;
     const { force } = req.query;
     const userId = req.user.id; // Get userId from JWT token
-
-    let query = { _id: boardId };
-
-    // If not force delete, check ownership
-    if (force !== 'true') {
-      query.createdBy = userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Authenticated user not found' });
     }
 
-    const result = await Board.findOneAndDelete(query);
-
-    if (!result) {
+    const board = await Board.findById(boardId);
+    if (!board) {
       return res.status(404).json({ message: 'Board not found' });
     }
+
+    const isAdmin = user.role === 'admin';
+    const isOwner = board.createdBy && board.createdBy.toString() === userId;
+
+    if (force === 'true') {
+      if (!isAdmin) {
+        return res.status(403).json({ message: 'Forbidden: force delete requires admin privileges' });
+      }
+    } else if (!isAdmin && !isOwner) {
+      return res.status(403).json({ message: 'Forbidden: not authorized to delete this board' });
+    }
+
+    const result = await Board.findByIdAndDelete(boardId);
 
     // Notify all users in the room that the board was deleted
     if (result.roomId) {
