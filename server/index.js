@@ -478,18 +478,18 @@ io.on('connection', (socket) => {
         if (board) {
           studentSocket.emit('load-board', {
             elements: board.elements,
-            allowedParticipants: board.allowedStudents || [],
+            allowedStudents: board.allowedStudents || [],
+            allowStudentEditing: board.allowStudentEditing || false,
             boardName: board.name,
-            hostName: board.createdBy?.username || 'Unknown Host',
-            hostId: board.createdBy?._id || board.createdBy
+            teacherName: board.createdBy?.username || 'Unknown Teacher'
           });
         } else {
           studentSocket.emit('load-board', {
             elements: [],
-            allowedParticipants: [],
+            allowedStudents: [],
+            allowStudentEditing: false,
             boardName: 'Untitled Board',
-            hostName: 'Unknown Host',
-            hostId: null
+            teacherName: 'Unknown Teacher'
           });
         }
       } catch (err) {
