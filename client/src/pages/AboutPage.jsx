@@ -4,7 +4,6 @@ import { useTheme } from '../context/ThemeContext';
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
-import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const AboutPage = () => {
@@ -23,7 +22,7 @@ const AboutPage = () => {
             document.body.style.overflow = 'unset';
         }
         return () => {
-            document.body.style.overflow = 'unset';
+            document.body.style.overflow = '';
         };
     }, [selectedMember]);
 
@@ -55,16 +54,7 @@ const AboutPage = () => {
             projects: ['Auth System', 'Email Service', 'Admin Panel', 'Database'],
             gradient: 'from-fuchsia-600 to-pink-500'
         },
-        {
-            id: 3,
-            name: 'Mansi Singh',
-            role: 'Full Stack Developer',
-            bio: 'Creating responsive interfaces and implementing backend features.',
-            image: '/team/mansi.jpeg',
-            skills: ['React', 'Express', 'UI Components', 'MongoDB'],
-            projects: ['Component Library', 'API Integration'],
-            gradient: 'from-emerald-600 to-teal-500'
-        },
+
     ];
 
     const values = [
@@ -105,7 +95,6 @@ const AboutPage = () => {
 
     return (
         <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-950 text-white' : 'bg-white text-gray-900'}`}>
-            <Navbar />
 
             {/* Hero Section */}
             <section className="relative pt-32 pb-20 px-6 overflow-hidden">
@@ -249,7 +238,7 @@ const AboutPage = () => {
                         <p className={`text-xl ${theme === 'dark' ? 'text-slate-400' : 'text-gray-600'}`}>The creators behind EduBoard</p>
                     </motion.div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
                         {team.map((member, index) => (
                             <motion.div
                                 key={index}
