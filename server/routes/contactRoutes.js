@@ -1,31 +1,27 @@
 const express = require('express');
 const router = express.Router();
+const { sendEmail } = require('../services/emailService'); // Existing service import kiya
 
-// POST /api/contact
 router.post('/', async (req, res) => {
+    const { name, email, subject, message } = req.body;
+
+    if (!name || !email || !message) {
+        return res.status(400).json({ message: 'Name, email, and message are required.' });
+    }
+
     try {
-        const { name, email, message } = req.body;
-
-        // Basic validation
-        if (!name || !email || !message) {
-            return res.status(400).json({ error: "All fields are required." });
-        }
-
-        // Log the received message to the server console
-        console.log(`\n📬 New Contact Form Submission:`);
-        console.log(`Name: ${name}`);
-        console.log(`Email: ${email}`);
-        console.log(`Message: ${message}\n`);
-
-        // Send a success response back to the frontend
-        res.status(200).json({ 
-            success: true, 
-            message: "Thank you! Your message has been received successfully." 
-        });
-
+        // Owner ke existing email service ko use karke mail bhejna
+        await sendEmail(
+            process.env.EMAIL_USER, // Admin (yaani tumhe) mail aayega
+            subject ? `[EduBoard Contact] ${subject}` : `[EduBoard Contact] New message from ${name}`,
+            `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+        );
+        
+        console.log(`[CONTACT FORM] Message received and sent via Nodemailer from ${name}`);
+        res.status(200).json({ message: 'Your message has been sent successfully.' });
     } catch (error) {
-        console.error('Error in contact route:', error);
-        res.status(500).json({ error: "Server error. Please try again later." });
+        console.error('[CONTACT FORM] Error sending email:', error);
+        res.status(500).json({ message: 'Failed to send message. Please try again later.' });
     }
 });
 
