@@ -406,23 +406,22 @@ io.on('connection', (socket) => {
         .populate('allowedStudents', 'username email')
         .populate('createdBy', 'username');
 
-        if (board) {
-          socket.emit('load-board', {
-            elements: board.elements,
-            allowedParticipants: board.allowedStudents || [],
-            boardName: board.name,
-            hostName: board.createdBy?.username || 'Unknown Host',
-            hostId: board.createdBy?._id || board.createdBy
-          });
-        } else {
-          socket.emit('load-board', {
-            elements: [],
-            allowedParticipants: [],
-            boardName: 'Untitled Board',
-            hostName: 'Unknown Host',
-            hostId: null
-          });
-        }
+      if (board) {
+        socket.emit('load-board', {
+          elements: board.elements,
+          allowedStudents: board.allowedStudents || [],
+          allowStudentEditing: board.allowStudentEditing || false, // FIX #95: send persisted toggle state to client
+          boardName: board.name,
+          teacherName: board.createdBy?.username || 'Unknown Teacher'
+        });
+      } else {
+        socket.emit('load-board', {
+          elements: [],
+          allowedStudents: [],
+          boardName: 'Untitled Board',
+          teacherName: 'Unknown Teacher'
+        });
+      }
     } catch (err) {
       console.error('Error loading board:', err);
     }
@@ -483,18 +482,18 @@ io.on('connection', (socket) => {
         if (board) {
           studentSocket.emit('load-board', {
             elements: board.elements,
-            allowedParticipants: board.allowedStudents || [],
+            allowedStudents: board.allowedStudents || [],
+            allowStudentEditing: board.allowStudentEditing || false,
             boardName: board.name,
-            hostName: board.createdBy?.username || 'Unknown Host',
-            hostId: board.createdBy?._id || board.createdBy
+            teacherName: board.createdBy?.username || 'Unknown Teacher'
           });
         } else {
           studentSocket.emit('load-board', {
             elements: [],
-            allowedParticipants: [],
+            allowedStudents: [],
+            allowStudentEditing: false,
             boardName: 'Untitled Board',
-            hostName: 'Unknown Host',
-            hostId: null
+            teacherName: 'Unknown Teacher'
           });
         }
       } catch (err) {
