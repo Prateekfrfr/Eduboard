@@ -9,6 +9,7 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const Board = require('./models/Board');
 const SavedBoard = require('./models/SavedBoard');
+const User = require('./models/User');
 const verifyToken = require('./utils/verifyToken');
 const verifyOwnership = require('./utils/verifyOwnership');
 
@@ -89,19 +90,33 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
 // Create a new named board (requires authentication)
 app.post('/api/boards/create', verifyToken, async (req, res) => {
   try {
-    const { name, userId, roomId } = req.body;
+    const { name, roomId } = req.body;
+    const authUserId = req.user?.id;
 
-    if (!name || !userId || !roomId) {
-      return res.status(400).json({ message: 'Name, userId, and roomId are required' });
+    if (!authUserId) {
+      return res.status(401).json({ message: 'Invalid authentication state' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(authUserId)) {
+      return res.status(400).json({ message: 'Invalid authenticated user ID' });
+    }
+
+    if (!name || !roomId) {
+      return res.status(400).json({ message: 'Name and roomId are required' });
+    }
+
+    const userExists = await User.exists({ _id: authUserId });
+    if (!userExists) {
+      return res.status(404).json({ message: 'Authenticated user not found' });
     }
 
     const newBoard = new Board({
       roomId,
       name,
-      createdBy: userId,
+      createdBy: authUserId,
       elements: [],
       participants: [{
-        userId: userId,
+        userId: authUserId,
         role: 'teacher', // Creator is assumed to be teacher
         joinedAt: new Date()
       }],
@@ -198,19 +213,28 @@ app.delete('/api/boards/by-id/:boardId', verifyToken, async (req, res) => {
     const { boardId } = req.params;
     const { force } = req.query;
     const userId = req.user.id; // Get userId from JWT token
-
-    let query = { _id: boardId };
-
-    // If not force delete, check ownership
-    if (force !== 'true') {
-      query.createdBy = userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Authenticated user not found' });
     }
 
-    const result = await Board.findOneAndDelete(query);
-
-    if (!result) {
+    const board = await Board.findById(boardId);
+    if (!board) {
       return res.status(404).json({ message: 'Board not found' });
     }
+
+    const isAdmin = user.role === 'admin';
+    const isOwner = board.createdBy && board.createdBy.toString() === userId;
+
+    if (force === 'true') {
+      if (!isAdmin) {
+        return res.status(403).json({ message: 'Forbidden: force delete requires admin privileges' });
+      }
+    } else if (!isAdmin && !isOwner) {
+      return res.status(403).json({ message: 'Forbidden: not authorized to delete this board' });
+    }
+
+    const result = await Board.findByIdAndDelete(boardId);
 
     // Notify all users in the room that the board was deleted
     if (result.roomId) {
