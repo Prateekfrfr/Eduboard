@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { sendEmail } = require('../services/emailService'); // Existing service import kiya
+const { sendContactFormEmail } = require('../services/emailService');
 
 router.post('/', async (req, res) => {
     const { name, email, subject, message } = req.body;
@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
 
     try {
         // Owner ke existing email service ko use karke mail bhejna
-        await sendEmail(
+        await sendContactFormEmail(
             process.env.ADMIN_EMAIL, // Admin (yaani tumhe) mail aayega
             subject ? `[EduBoard Contact] ${subject}` : `[EduBoard Contact] New message from ${name}`,
             `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`

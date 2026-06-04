@@ -65,7 +65,7 @@ const ContactPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-6xl md:text-7xl font-extrabold mb-6"
                     >
-                        <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">
                             Contact Our Team
                         </span>
                     </motion.h1>
@@ -147,7 +147,7 @@ const ContactPage = () => {
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="w-full py-4 rounded-xl text-lg font-semibold text-white bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 hover:opacity-95 transition-all shadow-lg active:scale-[0.99] disabled:opacity-50"
+                                className="w-full py-4 rounded-xl text-lg font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 transition-all shadow-lg shadow-indigo-500/30 active:scale-[0.99] disabled:opacity-50"
                             >
                                 {isSubmitting ? 'Sending Message...' : 'Send Message'}
                             </button>
